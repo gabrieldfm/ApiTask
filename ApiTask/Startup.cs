@@ -15,6 +15,7 @@ namespace ApiTask
         }
 
         public IConfiguration Configuration { get; }
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -25,9 +26,19 @@ namespace ApiTask
                     options => options.UseSqlServer(
                         Configuration.GetConnectionString("ApiConnection")));
 
-            services.AddSingleton<ITaskRepository, TaskRepository>();
+            services.AddScoped<ITaskRepository, TaskRepository>();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins,
+                builder =>
+                {
+                    builder.WithOrigins("http://localhost:4200").AllowAnyHeader()
+                                .AllowAnyMethod();
+                });
+            });
             services.AddMvc();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,6 +48,8 @@ namespace ApiTask
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseMvc();
         }

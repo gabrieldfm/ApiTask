@@ -56,7 +56,7 @@ namespace ApiTask.Controllers
             tarefa.Status = tarefa.Status;
             _taskRepository.Update(tarefa);
 
-            return new NoContentResult();
+            return new OkResult();
         }
 
         [HttpDelete("{id}")]
@@ -67,7 +67,7 @@ namespace ApiTask.Controllers
                 return NotFound();
 
             _taskRepository.Remove(id);
-            return new NoContentResult();
+            return new OkResult();
         }
     }
 }
